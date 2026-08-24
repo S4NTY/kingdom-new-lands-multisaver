@@ -6,12 +6,13 @@ from datetime import datetime
 
 from core.models import SaveEntry
 from core.save_manager import SaveManager
+from config import settings
 
 DEFAULT_GAME_DIR = "kingdom"
 DEFAULT_SAVES_DIR = "saves dump"
 
 def backup_name(timestamp: datetime) -> str:
-    return timestamp.strftime("%Y_%m_%d_%H_%M_%S")
+    return timestamp.strftime(settings.TIMESTAMP_FMT)
 
 def game_save_dir_path(tmp_path: Path) -> Path:
     return tmp_path / DEFAULT_GAME_DIR
@@ -58,14 +59,14 @@ class TestListSaves:
         assert len(entries) == 1
 
         entry = entries[0]
-        assert entry.path.name == "2026_1_2_3_4_5.dat"
-        assert entry.meta_path.name == "2026_1_2_3_4_5.json"
+        assert entry.path.name == "2026_01_02_03_04_05.dat"
+        assert entry.meta_path.name == "2026_01_02_03_04_05.json"
         assert entry.timestamp == ts
         assert entry.comment == comment
 
     def test_returns_newest_first(self, manager: SaveManager, saves_dir: Path):
-        write_backup(saves_dir, datetime(2026, 1, 1, 1,1,1), "old")
-        write_backup(saves_dir, datetime(2026, 1, 1, 1,1,2), "new")
+        write_backup(saves_dir, datetime(2026, 1, 1, 1,1,2), "old")
+        write_backup(saves_dir, datetime(2026, 1, 1, 1,1,1), "new")
 
         entries = manager.list_saves()
         assert len(entries) == 2
