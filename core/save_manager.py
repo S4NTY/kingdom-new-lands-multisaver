@@ -1,4 +1,5 @@
 import json
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import List
@@ -29,17 +30,101 @@ class SaveManager:
 
         return sorted(entries, reverse=True)
 
-    def create_save(self, comment: str="") -> SaveEntry:
-        pass
+    def create_save(self, comment: str = "") -> SaveEntry | None:
+        """Move save file to dump dir with new .json metadata file.
 
-    def restore_save(self, entry: SaveEntry) -> SaveEntry:
-        pass
+        Args:
+            comment (str, optional): file comment. Defaults to "".
 
-    def update_comment(self, entry: SaveEntry, comment: str) -> SaveEntry:
-        pass
+        Returns:
+            SaveEntry | None: new save entry obj.
+        """
 
-    def delete_save(self, entry: SaveEntry) -> SaveEntry:
-        pass
+        source = self.game_save_dir / settings.SAVE_FILE
+        if not source.is_file():
+            return None
+
+        self.saves_dir.mkdir(parents=True, exist_ok=True)
+
+        timestamp = datetime.now()
+        stem = timestamp.strftime(settings.TIMESTAMP_FMT)
+
+        dat_path = self.saves_dir / f"{stem}.dat"
+        json_path = self.saves_dir / f"{stem}.json"
+
+        shutil.copy2(source, dat_path)
+        json_path.write_text(
+            json.dumps({"comment": comment}, ensure_ascii=False),
+            encoding="utf-8"
+        )
+
+        return SaveEntry(
+            path=dat_path,
+            meta_path=json_path,
+            timestamp=timestamp,
+            comment=comment,
+        )
+
+    def restore_save(self, entry: SaveEntry) -> SaveEntry | None:
+        """Move save file from dump dir to game save dir
+
+         Args:
+            entry: entry to restore save.
+
+        Returns:
+            SaveEntry | None: save entry obj.
+        """
+
+        if not entry.path.is_file():
+            return None
+        
+        destination = self.game_save_dir / settings.SAVE_FILE
+        
+        if destination.exists():
+            destination.unlink()
+        
+        shutil.copy2(entry.path, destination)
+        return entry
+
+    def update_save(self, entry: SaveEntry, comment: str) -> SaveEntry | None:
+        """Update comment for an existing backup entry.
+
+        Args:
+            entry: backup entry to update.
+            comment: new comment value.
+
+        Returns:
+            SaveEntry | None: updated entry or None if backup file is missing.
+        """
+        if not entry.path.is_file():
+            return None
+
+        entry.meta_path.parent.mkdir(parents=True, exist_ok=True)
+        entry.meta_path.write_text(
+            json.dumps({"comment": comment}, ensure_ascii=False),
+            encoding="utf-8"
+        )
+
+        entry.comment = comment    
+        return entry
+
+    def delete_save(self, entry: SaveEntry):
+        """Delete a save backup and its metadata file.
+
+        Args:
+            entry: backup entry to delete.
+
+        Raises:
+            FileNotFoundError: if the backup data file is missing.
+        """
+        if not entry.path.exists():
+            raise FileNotFoundError(f"Save backup not found: {entry.path}")
+
+        if entry.path.is_file():
+            entry.path.unlink()
+
+        if entry.meta_path.is_file():
+            entry.meta_path.unlink()
 
     @staticmethod
     def _parse_entry(dat_path: Path) -> SaveEntry | None:
