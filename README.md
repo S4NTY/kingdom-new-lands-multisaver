@@ -1,6 +1,6 @@
 ## Kingdom New Lands Multisaver
 
-![Kingdom New Lands Multisaver window](imgs/window.png)
+<img src="https://github.com/S4NTY/kingdom-new-lands-multisaver/blob/master/imgs/window.png" width="70%">
 
 Kingdom New Lands Multisaver is a small tool that makes it easier to unlock
 achievements in *Kingdom: New Lands* by creating and restoring multiple game
