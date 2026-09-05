@@ -7,7 +7,7 @@ from datetime import datetime
 
 from core.models import SaveEntry
 from core.save_manager import SaveManager
-from config import settings
+from config.settings import settings
 
 DEFAULT_GAME_DIR = "kingdom"
 DEFAULT_SAVES_DIR = "saves dump"

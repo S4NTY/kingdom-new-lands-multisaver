@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from config import settings
+from config.settings import settings
 from .models import SaveEntry
 
 
@@ -39,7 +39,6 @@ class SaveManager:
         Returns:
             SaveEntry | None: new save entry obj.
         """
-
         source = self.game_save_dir / settings.SAVE_FILE
         if not source.is_file():
             return None
@@ -74,7 +73,6 @@ class SaveManager:
         Returns:
             SaveEntry | None: save entry obj.
         """
-
         if not entry.path.is_file():
             return None
         
