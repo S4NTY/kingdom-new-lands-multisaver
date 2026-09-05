@@ -16,6 +16,17 @@ saves.
 The application uses the game's local save files and lets you create backups,
 add comments to them, and restore a selected backup when needed.
 
+### How to use
+
+- **Create** - creates a backup of the current game save and adds it to the
+  saves list. The current land and day are automatically added as the initial comment.
+- **Update** - saves the text from the right-hand text area as the comment for
+  the selected backup.
+- **Restore** - copies the selected backup back to the game's save file. Close
+  the game before using this button.
+- **Delete** - permanently removes the selected backup and its comment file
+  after confirmation.
+
 ### Screenshots
 
 ![Unlocked achievements](imgs/achievements.png)
