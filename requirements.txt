@@ -1,0 +1,6 @@
+## Runtime dependencies
+# The application uses only Python's standard library.
+# tkinter is bundled with the official Python installation on Windows.
+
+## Development and test dependencies
+pytest>=8.0,<10
